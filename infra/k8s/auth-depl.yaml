@@ -7,14 +7,14 @@ spec:
   selector:
     matchLabels:
       app: auth
-    template:
-      metadata:
-        labels:
-          app: auth # Match with 'matchLabels.app'
-      spec:
-        containers:
-          - name: auth # Mainly for logging purposes
-            image: 1997rishabhsingh/auth
+  template:
+    metadata:
+      labels:
+        app: auth # Match with 'matchLabels.app'
+    spec:
+      containers:
+        - name: auth # Mainly for logging purposes
+          image: 1997rishabhsingh/auth
 ---
 apiVersion: v1
 kind: Service
