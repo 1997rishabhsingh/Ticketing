@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+    template:
+      metadata:
+        labels:
+          app: auth # Match with 'matchLabels.app'
+      spec:
+        containers:
+          - name: auth # Mainly for logging purposes
+            image: 1997rishabhsingh/auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec:
+  selector:
+    app: auth # Match with 'spec.selector.template.metadata.labels.app'
+  type: ClusterIP # Can be omitted since its default
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
