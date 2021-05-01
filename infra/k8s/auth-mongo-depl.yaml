@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-mongo
+  template:
+    metadata:
+      labels:
+        app: auth-mongo # Match with 'matchLabels.app'
+    spec:
+      containers:
+        - name: auth-mongo # Mainly for logging purposes
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-mongo-srv
+spec:
+  selector:
+    app: auth-mongo # Match with 'spec.selector.template.metadata.labels.app'
+  type: ClusterIP # Can be omitted since its default
+  ports:
+    - name:
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
