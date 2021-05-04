@@ -17,16 +17,31 @@ interface UserDocument extends Document {
   password: string;
 }
 
-const userSchema = new Schema({
-  email: {
-    type: String,
-    required: true
+const userSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    }
   },
-  password: {
-    type: String,
-    required: true
+  {
+    toJSON: {
+      versionKey: false, // not include __v (could also be done via delete ret.__v)
+      transform(doc, ret) {
+        ret.id = ret._id;
+
+        delete ret._id;
+        delete ret.password;
+
+        return ret;
+      }
+    }
   }
-});
+);
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
