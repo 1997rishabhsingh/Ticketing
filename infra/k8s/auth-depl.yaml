@@ -15,6 +15,12 @@ spec:
       containers:
         - name: auth # Mainly for logging purposes
           image: 1997rishabhsingh/auth
+          env:
+            - name: JWT_KEY # name that's visible to container (so could be anything)
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY # actual name of the key here
 ---
 apiVersion: v1
 kind: Service
