@@ -1,2 +1,5 @@
 node_modules
+
 commands.txt
+# next.js build output
+.next
