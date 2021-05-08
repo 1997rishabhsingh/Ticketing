@@ -17,3 +17,10 @@ spec:
                 name: auth-srv # name of the auth cluster service
                 port:
                   number: 3000 # port in auth-srv (not targetPort)
+          - path: /?(.*) # This should be last since it matches anything!
+            pathType: Prefix
+            backend:
+              service:
+                name: client-srv # name of the client cluster service
+                port:
+                  number: 3000 # port in client-srv (not targetPort)
