@@ -1,6 +1,18 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
+import faker from "faker";
+import request from "supertest";
+
 import { app } from "../app";
+
+// Could also be done by making helper in separate file
+declare global {
+  namespace NodeJS {
+    interface Global {
+      signin(): Promise<{ email: string; password: string; cookie: string[] }>;
+    }
+  }
+}
 
 let mongo: any;
 
@@ -27,3 +39,20 @@ beforeEach(async () => {
 afterAll(async () => {
   await mongo;
 });
+
+global.signin = async () => {
+  const signupData = {
+    email: faker.internet.email(),
+    password: faker.internet.password()
+  };
+
+  const response = await request(app)
+    .post("/api/users/signup")
+    .send(signupData)
+    .expect(201);
+
+  return {
+    ...signupData,
+    cookie: response.get("Set-Cookie")
+  };
+};
