@@ -1,6 +1,6 @@
 import React from "react";
 
-const App = () => {
+const LandingPage = () => {
   return (
     <div>
       Landing
@@ -9,4 +9,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default LandingPage;
