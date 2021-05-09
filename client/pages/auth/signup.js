@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Router from "next/router";
 import {
   Form,
   FormGroup,
@@ -8,54 +9,57 @@ import {
   FormFeedback,
   Alert
 } from "reactstrap";
-import axios from "axios";
+
+import useRequest from "../../hooks/use-request";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
+
+  const { doRequest, errors } = useRequest({
+    method: "POST",
+    url: "/api/users/signup",
+    onSuccess() {
+      Router.push("/");
+    }
+  });
+
+  const getFieldError = (field) =>
+    errors?.find((e) => e.field === field)?.message;
+
+  const getError = () => errors?.find((e) => !e.field)?.message;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios({
-        url: "/api/users/signup",
-        method: "POST",
-        data: { email, password }
-      });
-    } catch (err) {
-      const errs = err.response.data.errors.reduce(
-        (acc, e) => ({ ...acc, [e.field]: e.message }),
-        {}
-      );
-      setErrors(errs);
-    }
+
+    doRequest({ email, password });
   };
 
   return (
     <div>
       <h1>Sign Up!</h1>
       <Form onSubmit={handleSubmit}>
+        {getError() && <Alert color="danger">{getError()}</Alert>}
         <FormGroup>
           <Label id="email">Email Address</Label>
           <Input
             id="email"
-            invalid={!!errors.email}
+            invalid={!!getFieldError("email")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <FormFeedback>{errors.email}</FormFeedback>
+          <FormFeedback>{getFieldError("email")}</FormFeedback>
         </FormGroup>
         <FormGroup>
           <Label id="password">Password</Label>
           <Input
             id="password"
             type="password"
-            invalid={!!errors.password}
+            invalid={!!getFieldError("password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <FormFeedback>{errors.password}</FormFeedback>
+          <FormFeedback>{getFieldError("password")}</FormFeedback>
         </FormGroup>
 
         <Button color="primary" className="mt-3">
