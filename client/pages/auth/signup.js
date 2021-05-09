@@ -32,7 +32,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    doRequest({ email, password });
+    await doRequest({ email, password });
   };
 
   return (
