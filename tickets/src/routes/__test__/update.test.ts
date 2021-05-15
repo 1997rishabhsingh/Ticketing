@@ -72,6 +72,74 @@ it("returns 401 if user does not owns the ticket", async () => {
   expect(response1.body).toEqual(response2.body);
 });
 
-it("returns 400 if invalid title or price provided", async () => {});
+it("returns 400 if invalid title or price provided", async () => {
+  const { cookie } = global.signin();
 
-it("updates ticket if valid title and price provided", async () => {});
+  const newTicket = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send(newTicket)
+    .expect(201);
+
+  const updates = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send({
+      ...updates,
+      title: ""
+    })
+    .expect(400);
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send({
+      ...updates,
+      price: -parseFloat(faker.finance.amount(undefined, undefined, 2))
+    })
+    .expect(400);
+});
+
+it("updates ticket if valid title and price provided", async () => {
+  const { cookie } = global.signin();
+
+  const newTicket = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send(newTicket)
+    .expect(201);
+
+  const updates = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send(updates)
+    .expect(200);
+
+  const updatedResponse = await request(app)
+    .get(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .expect(200);
+
+  expect(updatedResponse.body.title).toEqual(updates.title);
+  expect(updatedResponse.body.price).toEqual(updates.price);
+});
