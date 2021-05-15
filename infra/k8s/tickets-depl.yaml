@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickets-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tickets
+  template:
+    metadata:
+      labels:
+        app: tickets # Match with 'matchLabels.app'
+    spec:
+      containers:
+        - name: tickets # Mainly for logging purposes
+          image: 1997rishabhsingh/tickets
+          env:
+            - name: JWT_KEY # name that's visible to container (so could be anything)
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY # actual name of the key here
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-srv
+spec:
+  selector:
+    app: tickets # Match with 'spec.selector.template.metadata.labels.app'
+  type: ClusterIP # Can be omitted since its default
+  ports:
+    - name: tickets
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

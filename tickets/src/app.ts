@@ -1,11 +1,6 @@
 import express from "express";
-require("express-async-errors");
+import "express-async-errors";
 import cookieSession from "cookie-session";
-
-import { currentUserRouter } from "./routes/current-user";
-import { signupRouter } from "./routes/signup";
-import { signinRouter } from "./routes/signin";
-import { signoutRouter } from "./routes/signout";
 import { errorHandler, NotFoundError } from "@rishtickets/common";
 
 const app = express();
@@ -21,10 +16,6 @@ app.use(
 );
 
 // route handlers
-app.use(currentUserRouter);
-app.use(signupRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
 
 app.all("*", (req, res, next) => {
   throw new NotFoundError();
