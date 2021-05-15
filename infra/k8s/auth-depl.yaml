@@ -16,6 +16,8 @@ spec:
         - name: auth # Mainly for logging purposes
           image: 1997rishabhsingh/auth
           env:
+            - name: MONGO_URI
+              value: "mongodb://auth-mongo-srv:27017/auth"
             - name: JWT_KEY # name that's visible to container (so could be anything)
               valueFrom:
                 secretKeyRef:
