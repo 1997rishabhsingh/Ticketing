@@ -1,5 +1,5 @@
 import express from "express";
-require("express-async-errors");
+import "express-async-errors";
 import cookieSession from "cookie-session";
 
 import { currentUserRouter } from "./routes/current-user";
