@@ -4,6 +4,7 @@ import cookieSession from "cookie-session";
 import { errorHandler, NotFoundError, currentUser } from "@rishtickets/common";
 
 import { createTicketRouter } from "./routes/new";
+import { showTicketRouter } from "./routes/show";
 
 const app = express();
 app.set("trust proxy", true);
@@ -20,6 +21,7 @@ app.use(currentUser);
 
 // route handlers
 app.use(createTicketRouter);
+app.use(showTicketRouter);
 
 app.all("*", (req, res, next) => {
   throw new NotFoundError();
