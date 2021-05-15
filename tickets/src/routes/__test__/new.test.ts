@@ -2,6 +2,7 @@ import request from "supertest";
 import faker from "faker";
 
 import { app } from "../../app";
+import { Ticket } from "../../models/ticket";
 
 it("has a POST route /api/tickets", async () => {
   const response = await request(app).post("/api/tickets").send({});
@@ -69,14 +70,24 @@ it("returns error if invalid price provided", async () => {
 it("creates a ticket with valid inputs", async () => {
   const { cookie } = global.signin();
 
+  let tickets = await Ticket.find({});
+
+  expect(tickets.length).toEqual(0);
+
+  const newTicket = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
   await request(app)
     .post("/api/tickets")
     .set("Cookie", cookie)
-    .send({
-      title: faker.commerce.product(),
-      price: faker.commerce.price()
-    })
+    .send(newTicket)
     .expect(201);
 
-  // check if ticket was saved in db
+  tickets = await Ticket.find({});
+
+  expect(tickets.length).toEqual(1);
+  expect(tickets[0].title).toEqual(newTicket.title);
+  expect(tickets[0].price).toEqual(newTicket.price);
 });
