@@ -1,7 +1,9 @@
 import express from "express";
 import "express-async-errors";
 import cookieSession from "cookie-session";
-import { errorHandler, NotFoundError } from "@rishtickets/common";
+import { errorHandler, NotFoundError, currentUser } from "@rishtickets/common";
+
+import { createTicketRouter } from "./routes/new";
 
 const app = express();
 app.set("trust proxy", true);
@@ -14,8 +16,10 @@ app.use(
     secure: process.env.NODE_ENV !== "test"
   })
 );
+app.use(currentUser);
 
 // route handlers
+app.use(createTicketRouter);
 
 app.all("*", (req, res, next) => {
   throw new NotFoundError();
