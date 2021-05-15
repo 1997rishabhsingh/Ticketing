@@ -10,7 +10,11 @@ import { app } from "../app";
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): { id: string; email: string; cookie: string[] };
+      signin(): {
+        id: mongoose.Types.ObjectId;
+        email: string;
+        cookie: string[];
+      };
     }
   }
 }
@@ -43,7 +47,7 @@ afterAll(async () => {
 
 global.signin = () => {
   const payload = {
-    id: faker.datatype.uuid(),
+    id: new mongoose.Types.ObjectId(),
     email: faker.internet.email()
   };
 
