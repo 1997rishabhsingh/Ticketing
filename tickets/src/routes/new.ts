@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@rishtickets/common";
 import { Ticket } from "../models/ticket";
+import mongoose from "mongoose";
 
 const router = Router();
 
@@ -16,7 +17,11 @@ router.post(
   async (req: Request, res: Response) => {
     const { title, price } = req.body;
 
-    const ticket = Ticket.build({ title, price, userId: req.currentUser!.id });
+    const ticket = Ticket.build({
+      title,
+      price,
+      userId: req.currentUser!.id
+    });
 
     await ticket.save();
 
