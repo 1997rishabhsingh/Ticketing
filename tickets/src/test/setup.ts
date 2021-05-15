@@ -2,6 +2,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import faker from "faker";
 import request from "supertest";
+import jwt from "jsonwebtoken";
 
 import { app } from "../app";
 
@@ -9,7 +10,7 @@ import { app } from "../app";
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): Promise<{ email: string; password: string; cookie: string[] }>;
+      signin(): { id: string; email: string; cookie: string[] };
     }
   }
 }
@@ -40,19 +41,20 @@ afterAll(async () => {
   await mongo;
 });
 
-global.signin = async () => {
-  const signupData = {
-    email: faker.internet.email(),
-    password: faker.internet.password()
+global.signin = () => {
+  const payload = {
+    id: faker.datatype.uuid(),
+    email: faker.internet.email()
   };
 
-  const response = await request(app)
-    .post("/api/users/signup")
-    .send(signupData)
-    .expect(201);
+  const session = JSON.stringify({
+    jwt: jwt.sign(payload, process.env.JWT_KEY!)
+  });
+
+  const base64 = Buffer.from(session).toString("base64");
 
   return {
-    ...signupData,
-    cookie: response.get("Set-Cookie")
+    ...payload,
+    cookie: [`express:sess=${base64}`]
   };
 };
