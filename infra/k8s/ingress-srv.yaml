@@ -17,6 +17,13 @@ spec:
                 name: auth-srv # name of the auth cluster service
                 port:
                   number: 3000 # port in auth-srv (not targetPort)
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tickets-srv # name of the tickets cluster service
+                port:
+                  number: 3000 # port in tickets-srv (not targetPort)
           - path: /?(.*) # This should be last since it matches anything!
             pathType: Prefix
             backend:
