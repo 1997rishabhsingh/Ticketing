@@ -2,7 +2,8 @@ import { Router, Request, Response } from "express";
 import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@rishtickets/common";
 import { Ticket } from "../models/ticket";
-import mongoose from "mongoose";
+import { TicketCreatedPublisher } from "../events/publishers/ticket-created-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = Router();
 
@@ -24,6 +25,15 @@ router.post(
     });
 
     await ticket.save();
+
+    // emit ticket created event
+    new TicketCreatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId
+    });
+    natsWrapper;
 
     res.status(201).send(ticket);
   }
