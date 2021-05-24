@@ -1,10 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import faker from "faker";
-import request from "supertest";
 import jwt from "jsonwebtoken";
-
-import { app } from "../app";
 
 // Could also be done by making helper in separate file
 declare global {
