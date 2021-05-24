@@ -33,7 +33,6 @@ router.post(
       price: ticket.price,
       userId: ticket.userId
     });
-    natsWrapper;
 
     res.status(201).send(ticket);
   }
