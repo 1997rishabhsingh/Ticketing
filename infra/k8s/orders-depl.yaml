@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders # Match with 'matchLabels.app'
+    spec:
+      containers:
+        - name: orders # Mainly for logging purposes
+          image: 1997rishabhsingh/orders
+          env:
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name # client id = pod name
+            - name: NATS_URL
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+            - name: MONGO_URI
+              value: "mongodb://orders-mongo-srv:27017/orders"
+            - name: JWT_KEY # name that's visible to container (so could be anything)
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY # actual name of the key here
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-srv
+spec:
+  selector:
+    app: orders # Match with 'spec.selector.template.metadata.labels.app'
+  type: ClusterIP # Can be omitted since its default
+  ports:
+    - name: orders
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
