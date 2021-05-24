@@ -2,6 +2,9 @@ import { Document, model, Model, Schema } from "mongoose";
 import { OrderStatus } from "@rishtickets/common";
 import { TicketDocument } from "./ticket";
 
+// Just to keep order related stuff at one place
+export { OrderStatus };
+
 interface OrderAttrs {
   userId: string;
   status: OrderStatus;
