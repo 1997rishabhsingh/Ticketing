@@ -3,7 +3,7 @@ import faker from "faker";
 import mongoose from "mongoose";
 
 import { app } from "../../app";
-import { Ticket } from "../../models/ticket";
+import { natsWrapper } from "../../nats-wrapper";
 
 it("returns 404 if ticket not found", async () => {
   const { cookie } = global.signin();
@@ -142,4 +142,32 @@ it("updates ticket if valid title and price provided", async () => {
 
   expect(updatedResponse.body.title).toEqual(updates.title);
   expect(updatedResponse.body.price).toEqual(updates.price);
+});
+
+it("publishes an event", async () => {
+  const { cookie } = global.signin();
+
+  const newTicket = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send(newTicket)
+    .expect(201);
+
+  const updates = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send(updates)
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
