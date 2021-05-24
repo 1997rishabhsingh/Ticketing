@@ -3,8 +3,6 @@ import mongoose from "mongoose";
 import faker from "faker";
 import jwt from "jsonwebtoken";
 
-import { app } from "../app";
-
 // Could also be done by making helper in separate file
 declare global {
   namespace NodeJS {
