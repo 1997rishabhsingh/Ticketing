@@ -1,8 +1,17 @@
 import { Request, Response, Router } from "express";
 import { body } from "express-validator";
-import { requireAuth, validateRequest } from "@rishtickets/common";
+import {
+  BadRequestError,
+  NotFoundError,
+  requireAuth,
+  validateRequest
+} from "@rishtickets/common";
+import { Ticket } from "../models/ticket";
+import { Order, OrderStatus } from "../models/order";
 
 const router = Router();
+
+const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 
 router.post(
   "/api/orders",
@@ -10,7 +19,38 @@ router.post(
   [body("ticketId").not().isEmpty().withMessage("Ticket Id is required")],
   validateRequest,
   async (req: Request, res: Response) => {
-    res.send({});
+    const { ticketId } = req.body;
+
+    // Find the ticket
+    const ticket = await Ticket.findById(ticketId);
+
+    if (!ticket) {
+      throw new NotFoundError();
+    }
+
+    // Ensure ticket not already reserved
+    const isReserved = await ticket.isReserved();
+    if (isReserved) {
+      throw new BadRequestError("Ticket already reserved");
+    }
+
+    // Calculate expiration date
+    const expiration = new Date();
+    expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
+
+    // Build order and save to DB
+    const order = Order.build({
+      userId: req.currentUser!.id,
+      status: OrderStatus.Created,
+      expiresAt: expiration,
+      ticket
+    });
+
+    await order.save();
+
+    // Publish emit on order creation
+
+    res.status(201).send(order);
   }
 );
 
