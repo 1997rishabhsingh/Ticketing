@@ -10,9 +10,22 @@ const start = async () => {
   if (!process.env.MONGO_URI) {
     throw new Error("Environment Variable 'MONGO_URI' not defined");
   }
+  if (!process.env.NATS_CLIENT_ID) {
+    throw new Error("Environment Variable 'NATS_CLIENT_ID' not defined");
+  }
+  if (!process.env.NATS_URL) {
+    throw new Error("Environment Variable 'NATS_URL' not defined");
+  }
+  if (!process.env.NATS_CLUSTER_ID) {
+    throw new Error("Environment Variable 'NATS_CLUSTER_ID' not defined");
+  }
 
   try {
-    await natsWrapper.connect("ticketing", "dgdsfvfds", "http://nats-srv:4222");
+    await natsWrapper.connect(
+      process.env.NATS_CLUSTER_ID,
+      process.env.NATS_CLIENT_ID,
+      process.env.NATS_URL
+    );
 
     natsWrapper.client.on("close", () => {
       console.log("NATS connection closed!");
