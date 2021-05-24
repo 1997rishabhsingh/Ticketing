@@ -1,6 +1,6 @@
 import { Schema, model, Model, Document } from "mongoose";
 
-// inerface to define structure to create new User
+// interface to define structure to create new User
 
 interface TicketAttrs {
   title: string;
