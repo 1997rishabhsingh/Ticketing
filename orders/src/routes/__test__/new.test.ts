@@ -61,3 +61,5 @@ it("reserves ticket", async () => {
 
   expect(savedOrder).toBeDefined();
 });
+
+it.todo("emits an order created event");
