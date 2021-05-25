@@ -6,7 +6,7 @@ import { errorHandler, NotFoundError, currentUser } from "@rishtickets/common";
 import { newOrderRouter } from "./routes/new";
 import { showOrderRouter } from "./routes/show";
 import { indexOrderRouter } from "./routes/index";
-import { deleteOrderRouter } from "./routes/delete";
+import { updateOrderRouter } from "./routes/update";
 
 const app = express();
 app.set("trust proxy", true);
@@ -25,7 +25,7 @@ app.use(currentUser);
 app.use(newOrderRouter);
 app.use(showOrderRouter);
 app.use(indexOrderRouter);
-app.use(deleteOrderRouter);
+app.use(updateOrderRouter);
 
 app.all("*", (req, res, next) => {
   throw new NotFoundError();
