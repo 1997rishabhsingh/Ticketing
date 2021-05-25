@@ -11,7 +11,7 @@ router.get(
     const { orderId } = req.params;
 
     const order = await Order.findOne({
-      id: orderId,
+      _id: orderId,
       userId: req.currentUser!.id
     }).populate("ticket");
 
