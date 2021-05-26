@@ -1,4 +1,5 @@
 import { Schema, model, Model, Document } from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // interface to define structure to create new User
 
@@ -12,6 +13,7 @@ interface TicketDocument extends Document {
   title: string;
   price: number;
   userId: string;
+  version: number;
 }
 
 interface TicketModel extends Model<TicketDocument> {
@@ -46,6 +48,9 @@ const ticketSchema = new Schema(
     }
   }
 );
+
+ticketSchema.set("versionKey", "version");
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
   return new Ticket(attrs);
