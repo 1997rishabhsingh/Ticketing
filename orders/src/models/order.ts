@@ -14,7 +14,7 @@ interface OrderAttrs {
 
 interface OrderDocument extends Document {
   userId: string;
-  status: string;
+  status: OrderStatus;
   expiresAt: Date;
   ticket: TicketDocument;
 }
