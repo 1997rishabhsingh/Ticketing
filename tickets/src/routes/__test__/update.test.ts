@@ -32,7 +32,7 @@ it("returns 401 if user not logged in", async () => {
   await request(app).get(`/api/tickets/${randomId}`).send(updates).expect(401);
 });
 
-it("returns 401 if user does not owns the ticket", async () => {
+it("returns 404 if user does not owns the ticket", async () => {
   // create 2 users
   const { cookie: cookie1 } = global.signin(); // user 1
   const { cookie: cookie2 } = global.signin(); // user 2
@@ -59,7 +59,7 @@ it("returns 401 if user does not owns the ticket", async () => {
     .put(`/api/tickets/${response1.body.id}`)
     .set("Cookie", cookie2)
     .send(updates)
-    .expect(401);
+    .expect(404);
 
   // Check if ticket was not modified in db
 

@@ -19,7 +19,8 @@ router.put(
       },
       {
         status: OrderStatus.Cancelled
-      }
+      },
+      { useFindAndModify: false, new: true }
     ).populate("ticket");
 
     if (!order) {
@@ -29,6 +30,7 @@ router.put(
     // publish event on cancellation
     new OrderCancelledPublisher(natsWrapper.client).publish({
       id: order.id,
+      version: order.version,
       ticket: {
         id: order.ticket.id
       }
