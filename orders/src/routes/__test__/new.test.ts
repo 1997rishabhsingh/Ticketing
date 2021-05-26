@@ -62,4 +62,20 @@ it("reserves ticket", async () => {
   expect(savedOrder).toBeDefined();
 });
 
-it.todo("emits an order created event");
+it("emits an order created event", async () => {
+  const { cookie } = global.signin();
+
+  const ticket = Ticket.build({
+    title: faker.commerce.product(),
+    price: parseFloat(faker.commerce.price(undefined, undefined, 2))
+  });
+  await ticket.save();
+
+  await request(app)
+    .post("/api/orders")
+    .set("Cookie", cookie)
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
