@@ -1,4 +1,4 @@
-import { Document, model, Model, Schema } from "mongoose";
+import { Document, model, Model, Schema, UpdateQuery } from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { Order, OrderStatus } from "./order";
 
@@ -17,6 +17,13 @@ export interface TicketDocument extends Document {
 
 interface TicketModel extends Model<TicketDocument> {
   build(attrs: TicketAttrs): TicketDocument;
+  findByEventAndUpdate(
+    event: {
+      id: string;
+      version: number;
+    },
+    updates: UpdateQuery<TicketDocument>
+  ): Promise<TicketDocument | null>;
 }
 
 const ticketSchema = new Schema(
@@ -52,6 +59,20 @@ ticketSchema.statics.build = (attrs: TicketAttrs) => {
   // rename id -> _id
   const { id, ...rest } = attrs;
   return new Ticket({ _id: id, ...rest });
+};
+
+ticketSchema.statics.findByEventAndUpdate = (
+  event: {
+    id: string;
+    version: number;
+  },
+  updates: UpdateQuery<TicketDocument>
+) => {
+  return Ticket.findOneAndUpdate(
+    { _id: event.id, version: event.version - 1 },
+    updates,
+    { new: true }
+  );
 };
 
 ticketSchema.methods.isReserved = async function () {

@@ -11,13 +11,9 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   async onMessage(data: TicketUpdatedEvent["data"], msg: Message) {
     const { id, title, price, version } = data;
 
-    const ticket = await Ticket.findOneAndUpdate(
-      {
-        _id: id,
-        version: version - 1
-      },
-      { title, price },
-      { useFindAndModify: false, new: true }
+    const ticket = await Ticket.findByEventAndUpdate(
+      { id, version },
+      { title, price }
     );
 
     if (!ticket) {
