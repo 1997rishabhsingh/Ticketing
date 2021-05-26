@@ -25,15 +25,22 @@ router.put(
     const { ticketId } = req.params;
     const { title, price } = req.body;
 
-    const ticket = await Ticket.findOneAndUpdate(
-      { _id: ticketId, userId: req.currentUser!.id },
-      { title, price },
-      { useFindAndModify: false, new: true }
-    );
+    /**
+     * NOTE: not using findOneAndUpdate because
+     * OCC(via mongoose-update-if-current) only works
+     * using .save() mehtod
+     */
+    const ticket = await Ticket.findOne({
+      _id: ticketId,
+      userId: req.currentUser!.id
+    });
 
     if (!ticket) {
       throw new NotFoundError();
     }
+
+    ticket.set({ title, price });
+    ticket.save();
 
     await new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: ticket.id,

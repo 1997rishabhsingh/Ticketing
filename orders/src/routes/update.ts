@@ -12,20 +12,22 @@ router.put(
   async (req: Request, res: Response) => {
     const { orderId } = req.params;
 
-    const order = await Order.findOneAndUpdate(
-      {
-        _id: orderId,
-        userId: req.currentUser!.id
-      },
-      {
-        status: OrderStatus.Cancelled
-      },
-      { useFindAndModify: false, new: true }
-    ).populate("ticket");
+    /**
+     * NOTE: not using findOneAndUpdate because
+     * OCC(via mongoose-update-if-current) only works
+     * using .save() mehtod
+     */
+    const order = await Order.findOne({
+      _id: orderId,
+      userId: req.currentUser!.id
+    }).populate("ticket");
 
     if (!order) {
       throw new NotFoundError();
     }
+
+    order.set({ status: OrderStatus.Cancelled });
+    await order.save();
 
     // publish event on cancellation
     new OrderCancelledPublisher(natsWrapper.client).publish({

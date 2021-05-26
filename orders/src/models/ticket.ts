@@ -17,13 +17,10 @@ export interface TicketDocument extends Document {
 
 interface TicketModel extends Model<TicketDocument> {
   build(attrs: TicketAttrs): TicketDocument;
-  findByEventAndUpdate(
-    event: {
-      id: string;
-      version: number;
-    },
-    updates: UpdateQuery<TicketDocument>
-  ): Promise<TicketDocument | null>;
+  findByEvent(event: {
+    id: string;
+    version: number;
+  }): Promise<TicketDocument | null>;
 }
 
 const ticketSchema = new Schema(
@@ -61,18 +58,8 @@ ticketSchema.statics.build = (attrs: TicketAttrs) => {
   return new Ticket({ _id: id, ...rest });
 };
 
-ticketSchema.statics.findByEventAndUpdate = (
-  event: {
-    id: string;
-    version: number;
-  },
-  updates: UpdateQuery<TicketDocument>
-) => {
-  return Ticket.findOneAndUpdate(
-    { _id: event.id, version: event.version - 1 },
-    updates,
-    { new: true }
-  );
+ticketSchema.statics.findByEvent = (event: { id: string; version: number }) => {
+  return Ticket.findOne({ _id: event.id, version: event.version - 1 });
 };
 
 ticketSchema.methods.isReserved = async function () {
