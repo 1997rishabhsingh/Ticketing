@@ -1,6 +1,8 @@
 import { NotFoundError, OrderStatus, requireAuth } from "@rishtickets/common";
 import { Request, Response, Router } from "express";
+import { OrderCancelledPublisher } from "../../events/publishers/order-cancelled";
 import { Order } from "../models/order";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = Router();
 
@@ -18,13 +20,19 @@ router.put(
       {
         status: OrderStatus.Cancelled
       }
-    );
+    ).populate("ticket");
 
     if (!order) {
       throw new NotFoundError();
     }
 
     // publish event on cancellation
+    new OrderCancelledPublisher(natsWrapper.client).publish({
+      id: order.id,
+      ticket: {
+        id: order.ticket.id
+      }
+    });
 
     res.status(200).send(order);
   }
