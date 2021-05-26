@@ -8,7 +8,7 @@ import {
 } from "@rishtickets/common";
 import { Ticket } from "../models/ticket";
 import { Order, OrderStatus } from "../models/order";
-import { OrderCreatedPublisher } from "../../events/publishers/order-created";
+import { OrderCreatedPublisher } from "../events/publishers/order-created-publisher";
 import { natsWrapper } from "../nats-wrapper";
 
 const router = Router();

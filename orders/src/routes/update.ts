@@ -1,6 +1,6 @@
 import { NotFoundError, OrderStatus, requireAuth } from "@rishtickets/common";
 import { Request, Response, Router } from "express";
-import { OrderCancelledPublisher } from "../../events/publishers/order-cancelled";
+import { OrderCancelledPublisher } from "../events/publishers/order-cancelled-publisher";
 import { Order } from "../models/order";
 import { natsWrapper } from "../nats-wrapper";
 
