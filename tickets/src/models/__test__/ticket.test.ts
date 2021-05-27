@@ -23,7 +23,7 @@ it("implements optimistic concurrency control", async () => {
   // mofidy and save second ticket instance
   secondInstance!.set({ price: 10 });
 
-  expect(secondInstance!.save()).rejects.toThrow();
+  await expect(secondInstance!.save()).rejects.toThrow();
 });
 
 it("increments version on multiple saves", async () => {
