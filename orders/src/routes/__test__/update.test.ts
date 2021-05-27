@@ -5,12 +5,15 @@ import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
 import { Order, OrderStatus } from "../../models/order";
 import { natsWrapper } from "../../nats-wrapper";
+import mongoose from "mongoose";
 
 it("marks an order status cancelled", async () => {
   const { cookie } = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   // create ticket
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });
@@ -36,9 +39,11 @@ it("marks an order status cancelled", async () => {
 
 it("emits a cancelled order event", async () => {
   const { cookie } = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   // create ticket
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });

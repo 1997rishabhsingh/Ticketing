@@ -1,14 +1,17 @@
 import request from "supertest";
 import faker from "faker";
+import mongoose from "mongoose";
 
 import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
 
 it("fetches the order", async () => {
   const { cookie, id } = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   // Create ticket
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });
@@ -34,9 +37,11 @@ it("fetches the order", async () => {
 it("return error if user does not own order", async () => {
   const user1 = global.signin();
   const user2 = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   // Create ticket
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });

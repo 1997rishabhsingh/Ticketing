@@ -20,8 +20,10 @@ it("return error if ticket does not exists", async () => {
 
 it("return error if ticket already reserved", async () => {
   const { cookie, id: userId } = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });
@@ -44,8 +46,10 @@ it("return error if ticket already reserved", async () => {
 
 it("reserves ticket", async () => {
   const { cookie } = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });
@@ -64,8 +68,10 @@ it("reserves ticket", async () => {
 
 it("emits an order created event", async () => {
   const { cookie } = global.signin();
+  const randomId = mongoose.Types.ObjectId().toHexString();
 
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });

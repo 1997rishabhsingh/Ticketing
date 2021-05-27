@@ -7,7 +7,10 @@ import { Ticket } from "../../models/ticket";
 import { Order, OrderStatus } from "../../models/order";
 
 const buildTicket = async () => {
+  const randomId = mongoose.Types.ObjectId().toHexString();
+
   const ticket = Ticket.build({
+    id: randomId,
     title: faker.commerce.product(),
     price: parseFloat(faker.commerce.price(undefined, undefined, 2))
   });
