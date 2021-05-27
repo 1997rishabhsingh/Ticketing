@@ -56,3 +56,14 @@ it("acknowledges the message", async () => {
 
   expect(msg.ack).toHaveBeenCalled();
 });
+
+it("ack function not called if skipped a version", async () => {
+  const { listener, data, ticket, msg } = await setup();
+
+  // skip to a future version
+  data.version = 10;
+
+  await expect(listener.onMessage(data, msg)).rejects.toThrow();
+
+  expect(msg.ack).not.toHaveBeenCalled();
+});
