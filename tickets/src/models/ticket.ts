@@ -36,8 +36,7 @@ const ticketSchema = new Schema(
       required: true
     },
     orderId: {
-      type: String,
-      default: null
+      type: String
     }
   },
   {
