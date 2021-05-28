@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 import { app } from "../../app";
 import { natsWrapper } from "../../nats-wrapper";
+import { Ticket } from "../../models/ticket";
 
 it("returns 404 if ticket not found", async () => {
   const { cookie } = global.signin();
@@ -170,4 +171,37 @@ it("publishes an event", async () => {
     .expect(200);
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it("rejects updates if ticket is reserved", async () => {
+  const { cookie } = global.signin();
+
+  // Create ticket
+  const newTicket = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send(newTicket)
+    .expect(201);
+
+  const ticket = await Ticket.findById(response.body.id);
+  // set random orderID
+  ticket!.set({ orderId: mongoose.Types.ObjectId() });
+  await ticket!.save();
+
+  // Attempt to update
+  const updates = {
+    title: faker.commerce.product(),
+    price: parseFloat(faker.finance.amount(undefined, undefined, 2))
+  };
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send(updates)
+    .expect(400);
 });
