@@ -38,7 +38,7 @@ const setup = async () => {
   return { listener, data, msg };
 };
 
-it("sets uderId of ticket", async () => {
+it("sets uderId of ticket and acknowledges the message", async () => {
   const { listener, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
@@ -46,7 +46,20 @@ it("sets uderId of ticket", async () => {
   const updatedTicket = await Ticket.findById(data.ticket.id);
 
   expect(updatedTicket!.orderId).toEqual(data.id);
+
   expect(msg.ack).toHaveBeenCalled();
 });
 
-it("acknowledges the message", async () => {});
+it("publishes a ticket updated event", async () => {
+  const { listener, data, msg } = await setup();
+
+  await listener.onMessage(data, msg);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+  // ts now treats publish as a jest mock function
+  const ticketStr = (natsWrapper.client.publish as jest.Mock).mock.calls[0][1];
+  const ticket = JSON.parse(ticketStr);
+
+  expect(ticket.orderId).toEqual(data.id);
+});
