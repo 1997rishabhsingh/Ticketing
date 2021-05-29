@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@rishtickets/common": "^1.0.8",
+    "@rishtickets/common": "^1.0.9",
     "@types/cookie-session": "^2.0.42",
     "@types/express": "^4.17.12",
     "@types/jsonwebtoken": "^8.5.1",
@@ -27,7 +27,7 @@
     "express-async-errors": "^3.1.1",
     "express-validator": "^6.10.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.11",
+    "mongoose": "^5.12.12",
     "mongoose-update-if-current": "^1.4.0",
     "node-nats-streaming": "^0.3.2",
     "ts-node-dev": "^1.1.6",
