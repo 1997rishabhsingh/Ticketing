@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-redis-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration-redis
+  template:
+    metadata:
+      labels:
+        app: expiration-redis # Match with 'matchLabels.app'
+    spec:
+      containers:
+        - name: expiration-redis # Mainly for logging purposes
+          image: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expiration-redis-srv
+spec:
+  selector:
+    app: expiration-redis # Match with 'spec.selector.template.metadata.labels.app'
+  type: ClusterIP # Can be omitted since its default
+  ports:
+    - name: db
+      protocol: TCP
+      port: 6379
+      targetPort: 6379
