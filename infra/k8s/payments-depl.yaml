@@ -31,6 +31,11 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY # actual name of the key here
+            - name: STRIPE_KEY # name that's visible to container (so could be anything)
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_KEY # actual name of the key here
 ---
 apiVersion: v1
 kind: Service
