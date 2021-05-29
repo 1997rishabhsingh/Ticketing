@@ -5,6 +5,7 @@ import { app } from "../../app";
 import { Order } from "../../models/orders";
 import { OrderStatus } from "@rishtickets/common";
 import { stripe } from "../../stripe";
+import { Payment } from "../../models/payment";
 
 // jest.mock("../../stripe");
 
@@ -66,7 +67,7 @@ it("return 400 when purchasing cancelled order", async () => {
     .expect(400);
 });
 
-it("return a 201 with valid inputs", async () => {
+it("return a 201 with valid inputs and store payment details", async () => {
   const { id: userId, cookie } = global.signin();
   const price = parseFloat(faker.commerce.price(undefined, undefined, 2));
   const order = Order.build({
@@ -91,14 +92,14 @@ it("return a 201 with valid inputs", async () => {
     limit: 50
   });
 
-  // CASE 1: using real stripe API
+  // CHOICE 1: using real stripe API
   const charge = charges.find((c) => c.amount === price * 100);
 
   expect(charge).toBeDefined();
 
   expect(charge!.currency).toEqual("inr");
 
-  // CASE 2: using mock function (need to remove .old from stripe mock file)
+  // CHOICE 2: using mock function (need to remove .old from stripe mock file)
   // const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
 
   // expect(chargeOptions).toEqual({
@@ -106,4 +107,11 @@ it("return a 201 with valid inputs", async () => {
   //   amount: order.price * 100,
   //   currency: "inr"
   // });
+
+  const payment = await Payment.findOne({
+    orderId: order.id,
+    stripeId: charge!.id
+  });
+
+  expect(payment).not.toBeNull();
 });
