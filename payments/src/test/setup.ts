@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import faker from "faker";
 import jwt from "jsonwebtoken";
 
+require("dotenv").config();
+
 // Could also be done by making helper in separate file
 declare global {
   namespace NodeJS {
@@ -21,8 +23,6 @@ jest.mock("../nats-wrapper");
 let mongo: any;
 
 beforeAll(async () => {
-  process.env.JWT_KEY = "asdfe";
-
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
 
