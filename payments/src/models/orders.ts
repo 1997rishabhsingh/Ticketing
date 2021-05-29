@@ -19,6 +19,10 @@ interface OrderDocument extends Document {
 
 interface OrderModel extends Model<OrderDocument> {
   build(attrs: OrderAttrs): OrderDocument;
+  findByEvent(event: {
+    id: string;
+    version: number;
+  }): Promise<OrderDocument | null>;
 }
 
 const orderSchema = new Schema(
@@ -51,7 +55,7 @@ const orderSchema = new Schema(
   }
 );
 
-orderSchema.set("versionKey", "vsersion");
+orderSchema.set("versionKey", "version");
 orderSchema.plugin(updateIfCurrentPlugin);
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {
@@ -62,6 +66,10 @@ orderSchema.statics.build = (attrs: OrderAttrs) => {
     userId: attrs.userId,
     status: attrs.status
   });
+};
+
+orderSchema.statics.findByEvent = (event: { id: string; version: number }) => {
+  return Order.findOne({ _id: event.id, version: event.version - 1 });
 };
 
 const Order = model<OrderDocument, OrderModel>("Order", orderSchema);
