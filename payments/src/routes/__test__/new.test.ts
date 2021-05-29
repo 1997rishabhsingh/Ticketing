@@ -6,7 +6,7 @@ import { Order } from "../../models/orders";
 import { OrderStatus } from "@rishtickets/common";
 import { stripe } from "../../stripe";
 
-jest.mock("../../stripe");
+// jest.mock("../../stripe");
 
 it("return 404 when order does not exist", async () => {
   const { cookie } = global.signin();
@@ -66,15 +66,14 @@ it("return 400 when purchasing cancelled order", async () => {
     .expect(400);
 });
 
-it("return a 204 with valid inputs", async () => {
+it("return a 201 with valid inputs", async () => {
   const { id: userId, cookie } = global.signin();
-  const stripeTestToken = "tok_visa";
-
+  const price = parseFloat(faker.commerce.price(undefined, undefined, 2));
   const order = Order.build({
     id: new mongoose.Types.ObjectId().toHexString(),
     version: 0,
     userId,
-    price: parseFloat(faker.commerce.price(undefined, undefined, 2)),
+    price,
     status: OrderStatus.Created
   });
   await order.save();
@@ -83,16 +82,28 @@ it("return a 204 with valid inputs", async () => {
     .post("/api/payments")
     .set("Cookie", cookie)
     .send({
-      token: stripeTestToken,
+      token: process.env.STRIPE_TOKEN,
       orderId: order.id
     })
     .expect(201);
 
-  const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
-
-  expect(chargeOptions).toEqual({
-    source: stripeTestToken,
-    amount: order.price * 100,
-    currency: "inr"
+  const { data: charges } = await stripe.charges.list({
+    limit: 50
   });
+
+  // CASE 1: using real stripe API
+  const charge = charges.find((c) => c.amount === price * 100);
+
+  expect(charge).toBeDefined();
+
+  expect(charge!.currency).toEqual("inr");
+
+  // CASE 2: using mock function (need to remove .old from stripe mock file)
+  // const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
+
+  // expect(chargeOptions).toEqual({
+  //   source: process.env.STRIPE_TOKEN,
+  //   amount: order.price * 100,
+  //   currency: "inr"
+  // });
 });
