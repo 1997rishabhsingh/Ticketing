@@ -8,7 +8,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       signin(): {
-        id: mongoose.Types.ObjectId;
+        id: string;
         email: string;
         cookie: string[];
       };
@@ -48,7 +48,7 @@ afterAll(async () => {
 
 global.signin = () => {
   const payload = {
-    id: new mongoose.Types.ObjectId(),
+    id: new mongoose.Types.ObjectId().toHexString(),
     email: faker.internet.email()
   };
 
