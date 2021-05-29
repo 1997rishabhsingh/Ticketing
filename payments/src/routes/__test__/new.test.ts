@@ -4,6 +4,9 @@ import faker from "faker";
 import { app } from "../../app";
 import { Order } from "../../models/orders";
 import { OrderStatus } from "@rishtickets/common";
+import { stripe } from "../../stripe";
+
+jest.mock("../../stripe");
 
 it("return 404 when order does not exist", async () => {
   const { cookie } = global.signin();
@@ -61,4 +64,35 @@ it("return 400 when purchasing cancelled order", async () => {
       orderId: order.id
     })
     .expect(400);
+});
+
+it("return a 204 with valid inputs", async () => {
+  const { id: userId, cookie } = global.signin();
+  const stripeTestToken = "tok_visa";
+
+  const order = Order.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    version: 0,
+    userId,
+    price: parseFloat(faker.commerce.price(undefined, undefined, 2)),
+    status: OrderStatus.Created
+  });
+  await order.save();
+
+  await request(app)
+    .post("/api/payments")
+    .set("Cookie", cookie)
+    .send({
+      token: stripeTestToken,
+      orderId: order.id
+    })
+    .expect(201);
+
+  const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
+
+  expect(chargeOptions).toEqual({
+    source: stripeTestToken,
+    amount: order.price * 100,
+    currency: "inr"
+  });
 });
