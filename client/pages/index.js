@@ -25,8 +25,8 @@ const LandingPage = ({ currentUser, tickets }) => {
         {tickets.map((t, i) => (
           <tr key={t.id}>
             <th scope="row">{i + 1}</th>
-            <td>{t.price}</td>
-            <td>{t.price}</td>
+            <td>{t.title}</td>
+            <td>₹ {t.price}</td>
             <td>
               <Button
                 color="primary"
