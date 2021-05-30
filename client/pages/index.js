@@ -1,5 +1,7 @@
+import { Button, Table } from "reactstrap";
+import Link from "next/link";
+import Router from "next/router";
 import buildClient from "../api/build-client";
-import { Table } from "reactstrap";
 
 const LandingPage = ({ currentUser, tickets }) => {
   console.log(tickets);
@@ -16,6 +18,7 @@ const LandingPage = ({ currentUser, tickets }) => {
           <th>#</th>
           <th>Title</th>
           <th>Price</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +27,18 @@ const LandingPage = ({ currentUser, tickets }) => {
             <th scope="row">{i + 1}</th>
             <td>{t.price}</td>
             <td>{t.price}</td>
+            <td>
+              <Button
+                color="primary"
+                size="sm"
+                outline
+                onClick={() => {
+                  Router.push(`/tickets/${t.id}`);
+                }}
+              >
+                Details
+              </Button>
+            </td>
           </tr>
         ))}
       </tbody>
