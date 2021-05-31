@@ -4,13 +4,9 @@ import Router from "next/router";
 import buildClient from "../api/build-client";
 
 const LandingPage = ({ currentUser, tickets }) => {
-  console.log(tickets);
-  // return currentUser ? (
-  //   <h1>You are signed in</h1>
-  // ) : (
-  //   <h1>You are not signed in</h1>
-  // );
-
+  if (!currentUser) {
+    return <h1>You are not signed in</h1>;
+  }
   return (
     <Table hover>
       <thead>

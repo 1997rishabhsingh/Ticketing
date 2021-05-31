@@ -51,8 +51,6 @@ TicketShow.getInitialProps = async (ctx) => {
 
   const { data } = await buildClient(ctx).get(`/api/tickets/${ticketId}`);
 
-  console.log(data);
-
   return { ticket: data };
 };
 
