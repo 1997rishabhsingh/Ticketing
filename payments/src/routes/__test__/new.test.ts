@@ -67,6 +67,28 @@ it("return 400 when purchasing cancelled order", async () => {
     .expect(400);
 });
 
+it("return 400 when purchasing completed order", async () => {
+  const { id: userId, cookie } = global.signin();
+
+  const order = Order.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    version: 0,
+    userId,
+    price: parseFloat(faker.commerce.price(undefined, undefined, 2)),
+    status: OrderStatus.Complete
+  });
+  await order.save();
+
+  await request(app)
+    .post("/api/payments")
+    .set("Cookie", cookie)
+    .send({
+      token: faker.random.alphaNumeric(),
+      orderId: order.id
+    })
+    .expect(400);
+});
+
 it("return a 201 with valid inputs and store payment details", async () => {
   const { id: userId, cookie } = global.signin();
   const price = parseFloat(faker.commerce.price(undefined, undefined, 2));

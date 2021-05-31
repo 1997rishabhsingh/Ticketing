@@ -32,8 +32,6 @@ router.post(
       throw new NotFoundError();
     }
 
-    console.log({ order });
-
     if (order.status === OrderStatus.Cancelled) {
       throw new BadRequestError("Order already cancelled");
     }
