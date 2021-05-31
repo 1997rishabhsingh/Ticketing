@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { OrderCancelledListener } from "./events/listeners/order-cancelled-listener";
 import { OrderCreatedListener } from "./events/listeners/order-created-listener";
+import { OrderCompletedListener } from "./events/listeners/order-completed-listener";
 import { natsWrapper } from "./nats-wrapper";
 
 const start = async () => {
@@ -39,6 +40,7 @@ const start = async () => {
 
     new OrderCreatedListener(natsWrapper.client).listen();
     new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCompletedListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,

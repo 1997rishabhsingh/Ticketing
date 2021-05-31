@@ -32,8 +32,14 @@ router.post(
       throw new NotFoundError();
     }
 
+    console.log({ order });
+
     if (order.status === OrderStatus.Cancelled) {
       throw new BadRequestError("Order already cancelled");
+    }
+
+    if (order.status === OrderStatus.Complete) {
+      throw new BadRequestError("Payment already completed");
     }
 
     const charge = await stripe.charges.create({
