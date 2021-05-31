@@ -6,6 +6,7 @@ import {
 } from "@rishtickets/common";
 import { Message } from "node-nats-streaming";
 import { Order } from "../../models/order";
+import { OrderCompletedPublisher } from "../publishers/order-completed-publisher";
 import { queueGroupName } from "./queue-group-names";
 
 export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
@@ -25,6 +26,14 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
 
     // NOTE: Since no update will be made after order is marked 'Complete'
     // no order updated event is published
+
+    await new OrderCompletedPublisher(this.client).publish({
+      id: order.id,
+      version: order.version,
+      ticket: {
+        id: order.ticket.id
+      }
+    });
 
     msg.ack();
   }
