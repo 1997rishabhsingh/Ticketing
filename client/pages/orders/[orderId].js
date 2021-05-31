@@ -13,8 +13,7 @@ const OrderShow = ({ order, currentUser }) => {
     method: "POST",
     url: "/api/payments",
     onSuccess(payment) {
-      // Router.push(`/orders/${order.id}`);
-      console.log(payment);
+      Router.push("/orders");
     }
   });
 
