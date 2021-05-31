@@ -10,6 +10,7 @@ import {
   Col,
   Alert
 } from "reactstrap";
+import Router from "next/router";
 import buildClient from "../../api/build-client";
 import useRequest from "../../hooks/use-request";
 
@@ -18,8 +19,7 @@ const TicketShow = ({ ticket }) => {
     method: "POST",
     url: "/api/orders",
     onSuccess(order) {
-      // Router.push("/");
-      console.log(order);
+      Router.push(`/orders/${order.id}`);
     }
   });
   const getError = () => errors?.find((e) => !e.field)?.message;
