@@ -13,6 +13,8 @@ const start = async () => {
   }
 
   try {
+    console.log("Starting up Expiration Service...");
+
     await natsWrapper.connect(
       process.env.NATS_CLUSTER_ID,
       process.env.NATS_CLIENT_ID,
