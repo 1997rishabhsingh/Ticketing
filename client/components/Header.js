@@ -14,6 +14,16 @@ const Header = ({ currentUser }) => {
       show: !currentUser
     },
     {
+      label: "Sell Tickets",
+      href: "/tickets/new",
+      show: !!currentUser
+    },
+    {
+      label: "My Orders",
+      href: "/orders",
+      show: !!currentUser
+    },
+    {
       label: "Sign Out",
       href: "/auth/signout",
       show: !!currentUser
