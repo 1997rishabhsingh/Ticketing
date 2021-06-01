@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 import faker from "faker";
 import jwt from "jsonwebtoken";
 
-require("dotenv").config();
+if (!process.env.CI) {
+  require("dotenv").config();
+}
 
 // Could also be done by making helper in separate file
 declare global {
