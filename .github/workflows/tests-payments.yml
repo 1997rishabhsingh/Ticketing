@@ -10,6 +10,4 @@ jobs:
       - uses: actions/checkout@v2
       - run: cd payments && npm install && npm run test:ci
         env:
-          JWT_KEY: test_key
-          middle_name: The
-          Last_Name: Octocat
+          JWT_KEY: ${{ secrets.JWT_KEY }}
