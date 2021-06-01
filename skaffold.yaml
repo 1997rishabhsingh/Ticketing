@@ -4,6 +4,7 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/*
+      - ./infra/k8s-dev/* # changes to k8s-prod in github workflow
 build:
   local:
     push: false
