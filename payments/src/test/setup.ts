@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 
 require("dotenv").config();
 
+console.log(process.env);
+
 // Could also be done by making helper in separate file
 declare global {
   namespace NodeJS {
