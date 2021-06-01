@@ -5,6 +5,10 @@ import request from "supertest";
 
 import { app } from "../app";
 
+if (!process.env.CI) {
+  require("dotenv").config();
+}
+
 // Could also be done by making helper in separate file
 declare global {
   namespace NodeJS {
@@ -17,8 +21,6 @@ declare global {
 let mongo: any;
 
 beforeAll(async () => {
-  process.env.JWT_KEY = "asdfe";
-
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
 

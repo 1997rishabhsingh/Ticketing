@@ -1,7 +1,6 @@
-name: tests-auth
+name: tests-orders
 
-on:
-  pull_request
+on: pull_request
 
 jobs:
   build:
@@ -9,3 +8,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cd orders && npm install && npm run test:ci
+        env:
+          JWT_KEY: ${{ secrets.JWT_KEY }}
