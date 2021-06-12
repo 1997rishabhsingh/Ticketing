@@ -4,6 +4,14 @@ Ticketing a project that has been made to depict Microservices architecture runn
 Each service is containerized using docker and are configured to run inside a kubernetes cluster. All the services communicate via events. 
 A user upon successful authentication, can create a ticket, view list of all the available tickets, view a particular ticket and attempt to buy it by making a valid payment.
 
+## Table of Contents
+- [About](#Ticketing)
+- [Project Structure](#Project-Structure)
+- [Project Setup](#Project-Setup)
+- [Running the Project](#Running-the-Project)
+- [Technologies](#Technologies)
+- [License](#License)
+
 ## Project Structure
 The project makes use of the various services to work. All the services are capable of working independently. These services communicate with each other via events. A service upon completion of certain action publishes an event which is then received by any service that is listening for it. Each service wherever required maintains its own copy of database.
 
@@ -32,21 +40,21 @@ In order to run the project following things are required.
 
 ## Project Setup
 Once the prerequisites are met, start Docker Desktop and Kubernetes and create the following secrets inside Kubernetes cluster.
-### JWT Secret
+#### JWT Secret
 To create JWT Secret, execute the following command
 > kubectl create secret generic jwt-secret --from-literal=JWT_KEY=myjwtsecret
 
 Replace ```myjwtsecret``` with any random string of your choice
-### Stripe Secret
+#### Stripe Secret
 Execute the following command to create Stripe secret
 > kubectl create secret generic stripe-secret --from-literal=STRIPE_SECRET_KEY=mystripesecret
 
 Replace ```mystripesecret``` with your Stripe Secret key. Login and visit [this][StripeAPIPage] to get your stripe keys.
 
-### Environment Files
+#### Environment Files
 Navigate to each directory (corresponding to respective service) and setup the ```.env``` file. Use the ```.env.sample``` file for any reference.
 
-### Edit Host File
+#### Edit Host File
 Add the following entry at the end of your system's host file.
 > 127.0.0.1 ticketing.dev
 
